@@ -1,7 +1,8 @@
 // src/components/RegisterForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import './RegisterForm.css'
+import './RegisterForm.css';
+import { FaUser, FaLock } from "react-icons/fa";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -29,15 +30,26 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Regisztráció</h2>
-      <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Felhasználónév" />
-      {errors.username && <p>{errors.username}</p>}
-      <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Jelszó" />
-      {errors.password && <p>{errors.password}</p>}
-      <button type="submit">Regisztrálok</button>
-      {message && <p>{message}</p>}
-    </form>
+    <div className='wrapper'>
+      <form onSubmit={handleSubmit}>
+        <h2>Regisztráció</h2>
+    
+        <div className='input-box'>
+          <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Felhasználónév" />
+          <FaUser className='icon' />
+          {errors.username && <p>{errors.username}</p>}
+        </div>
+    
+        <div className='input-box'>
+          <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Jelszó" />
+          {errors.password && <p>{errors.password}</p>}
+          <FaLock className='icon'/>
+        </div>
+    
+        <button type="submit">Regisztrálok</button>
+        {message && <p>{message}</p>}
+      </form>
+    </div>
   );
 };
 
