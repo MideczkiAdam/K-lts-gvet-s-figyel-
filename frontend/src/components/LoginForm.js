@@ -3,11 +3,15 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './LoginForm.css'
 import { FaUser, FaLock } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
+
 
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,6 +25,7 @@ const LoginForm = () => {
       localStorage.setItem('access', response.data.access);
       localStorage.setItem('refresh', response.data.refresh);
       setMessage('Sikeres bejelentkezés!');
+      navigate('/Dashboard');
     } catch (error) {
       setMessage('Hibás felhasználónév vagy jelszó.');
     }
