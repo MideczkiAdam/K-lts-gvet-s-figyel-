@@ -14,10 +14,9 @@ const AuthPage = () => {
       {isRegistering ? <RegisterForm /> : <LoginForm />}
         <p style={{ textAlign: 'center', marginTop: 20 }}>
         {isRegistering ? (
-            <>
-            Már van fiókod?{' '}
-            <button onClick={toggleForm}>Jelentkezz be</button>
-            </>
+            <div className='login-link'>
+              <p>Már van fiókod? <a onClick={toggleForm}>Jelentkezz be</a></p>
+            </div>
         ) : (
             <div className='register-link'>
               <p>Nincs még fiókod? <a onClick={toggleForm}>Regisztrálj</a></p>
