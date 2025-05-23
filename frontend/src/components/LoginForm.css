@@ -1,3 +1,9 @@
+body{
+    background: url(background.png);
+    background-size: cover;
+    background-position: center;
+}
+
 .wrapper{
     width: 420px;
     background-color: transparent;
