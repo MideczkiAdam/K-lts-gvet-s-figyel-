@@ -47,7 +47,7 @@ const LoginForm = () => {
         <button type="submit">Belépés</button>
 
         
-        {message && <p>{message}</p>}
+        {message && <p className='error'>{message}</p>}
       </form>
     </div>
     

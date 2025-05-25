@@ -65,6 +65,13 @@ body{
     font-weight: 700;
 }
 
+.wrapper .error{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
 .wrapper .register-link{
     font-size: 14.5px;
     text-align: center;

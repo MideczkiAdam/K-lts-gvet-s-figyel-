@@ -37,17 +37,17 @@ const RegisterForm = () => {
         <div className='input-box'>
           <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Felhasználónév" />
           <FaUser className='icon' />
-          {errors.username && <p>{errors.username}</p>}
+          {errors.username && <p className='error'>{errors.username}</p>}
         </div>
     
         <div className='input-box'>
           <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="Jelszó" />
-          {errors.password && <p>{errors.password}</p>}
+          {errors.password && <p className='error'>{errors.password}</p>}
           <FaLock className='icon'/>
         </div>
     
         <button type="submit">Regisztrálok</button>
-        {message && <p>{message}</p>}
+        {message && <p className='message'>{message}</p>}
       </form>
     </div>
   );
