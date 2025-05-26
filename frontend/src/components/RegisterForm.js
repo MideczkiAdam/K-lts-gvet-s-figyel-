@@ -9,18 +9,6 @@ const RegisterForm = () => {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-  // háttér beállítás csak erre az oldalra
-  document.body.style.background = "url('/background.png')";
-  document.body.style.backgroundSize = "cover";
-  document.body.style.backgroundPosition = "center";
-
-  return () => {
-    // mikor elhagyjuk az oldalt, visszaállítjuk
-    document.body.style.background = "none";
-  };
-  }, []);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -48,8 +36,8 @@ const RegisterForm = () => {
     
         <div className='input-box'>
           <input type="text" name="username" value={formData.username} onChange={handleChange} placeholder="Felhasználónév" />
-          <FaUser className='icon' />
           {errors.username && <p className='error'>{errors.username}</p>}
+          <FaUser className='icon' />
         </div>
     
         <div className='input-box'>

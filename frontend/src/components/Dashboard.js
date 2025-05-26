@@ -6,8 +6,10 @@ import './Dashboard.css';
 const Dashboard = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showIncomeModal, setShowIncomeModal] = useState(false);
+    const [showExpenseModal, setShowExpenseModal] = useState(false);
     const [incomeAmount, setIncomeAmount] = useState('');
+    const [expenseAmount, setExpenseAmount] = useState('');
     const [balance, setBalance] = useState(0)
     const [monthlyIncome, setMonthlyIncome] = useState(0)
 
@@ -46,7 +48,7 @@ const Dashboard = () => {
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setShowModal(false);
+        setShowIncomeModal(false);
         setIncomeAmount('');
         fetchUser();
         fetchBalance();
@@ -111,28 +113,52 @@ const Dashboard = () => {
                 <table></table>
               </div>
               <div className='gombok'>
-                <button className='uj_bevetel' onClick={() => setShowModal(true)}>Új bevétel hozzáadása</button>
-                <button className='uj_kiadas'>Új kiadás hozzáadása</button>
+                <button className='uj_bevetel' onClick={() => setShowIncomeModal(true)}>Új bevétel hozzáadása</button>
+                <button className='uj_kiadas' onClick={() => setShowExpenseModal(true)}>Új kiadás hozzáadása</button>
               </div>
             </div> 
 
-            {showModal && (
-              <div className="modal">
-                <div className="modal-content">
-                  <h3>Új bevétel hozzáadása</h3>
-                  <input type="number" placeholder="Add meg az összeget" value={incomeAmount} onChange={(e) => setIncomeAmount(e.target.value)}/>
-                  <button onClick={handleAddIncome}>Hozzáadás</button>
-                  <button onClick={() => setShowModal(false)}>Mégsem</button>
+            {showIncomeModal && (
+              <div className="modal-overlay" onClick={() => setShowIncomeModal(false)}>
+                <div className="modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-content">
+                    <h3>Új bevétel hozzáadása</h3>
+                    <input
+                      type="number"
+                      placeholder="Add meg az összeget"
+                      value={incomeAmount}
+                      onChange={(e) => setIncomeAmount(e.target.value)}
+                    />
+                    <div className='buttons'>
+                      <button onClick={handleAddIncome} className='plus'>Hozzáadás</button>
+                      <button onClick={() => setShowIncomeModal(false)} className='minus'>Mégsem</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
-        </div>
-        
-        
-        
-    )
 
-    
+            {showExpenseModal && (
+              <div className="modal-overlay" onClick={() => setShowExpenseModal(false)}>
+                <div className="modal" onClick={(e) => e.stopPropagation()}>
+                  <div className="modal-content">
+                    <h3>Új kiadás hozzáadása</h3>
+                    <input
+                      type="number"
+                      placeholder="Add meg az összeget"
+                      value={expenseAmount}
+                      onChange={(e) => setExpenseAmount(e.target.value)}
+                    />
+                    <div className='buttons'>
+                      {<button/* ide baszd be a handleAddExpense függvényt, meg írd is meg  */className='plus'>Hozzáadás</button>}
+                      <button onClick={() => setShowExpenseModal(false)} className='minus'>Mégsem</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+        </div>            
+    )   
 }
 
 export default Dashboard;

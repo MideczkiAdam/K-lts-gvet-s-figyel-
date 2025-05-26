@@ -12,16 +12,6 @@ const LoginForm = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-  document.body.style.background = "url('/background.png')";
-  document.body.style.backgroundSize = "cover";
-  document.body.style.backgroundPosition = "center";
-
-  return () => {
-    document.body.style.background = "none";
-  };
-  }, []);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
