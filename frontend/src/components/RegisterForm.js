@@ -1,5 +1,5 @@
 // src/components/RegisterForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
 import './RegisterForm.css';
 import { FaUser, FaLock } from "react-icons/fa";
@@ -8,6 +8,18 @@ const RegisterForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+  // háttér beállítás csak erre az oldalra
+  document.body.style.background = "url('/background.png')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+
+  return () => {
+    // mikor elhagyjuk az oldalt, visszaállítjuk
+    document.body.style.background = "none";
+  };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

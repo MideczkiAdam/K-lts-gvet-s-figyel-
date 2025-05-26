@@ -1,5 +1,5 @@
 // src/components/LoginForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
 import './LoginForm.css'
 import { FaUser, FaLock } from "react-icons/fa";
@@ -12,6 +12,15 @@ const LoginForm = () => {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+  document.body.style.background = "url('/background.png')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+
+  return () => {
+    document.body.style.background = "none";
+  };
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
