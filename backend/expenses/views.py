@@ -34,6 +34,7 @@ class TransactionView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
+
 class BalanceView(APIView):
     def get(self, request):
         user = request.user
@@ -53,3 +54,11 @@ class BalanceView(APIView):
             "monthly_income": monthly_income,
             "monthly_expense": monthly_expense
         })
+
+
+class TransactionListView(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Transaction.objects.filter(user=self.request.user).order_by('-date')[:5]

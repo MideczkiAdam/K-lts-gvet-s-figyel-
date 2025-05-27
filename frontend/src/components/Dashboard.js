@@ -12,6 +12,8 @@ const Dashboard = () => {
     const [expenseAmount, setExpenseAmount] = useState('');
     const [balance, setBalance] = useState(0)
     const [monthlyIncome, setMonthlyIncome] = useState(0)
+    const [monthlyExpense, setMonthlyExpense] = useState(0);
+    const [transactions, setTransactions] = useState([]);
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -33,10 +35,42 @@ const Dashboard = () => {
           console.error('Hiba a felhasználó lekérdezésénél', error);
         }
     }
+    
+    const fetchBalance = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get('http://localhost:8000/api/balance/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setBalance(response.data.balance);
+        setMonthlyIncome(response.data.monthly_income);
+        setMonthlyExpense(response.data.monthly_expense)
+      } catch (error) {
+        console.error("Hiba az egyenleg lekérdezésénél:", error);
+      }
+    }
+
+    const fetchTransactions = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get('http://localhost:8000/api/transactions/list/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setTransactions(response.data)
+      } catch (error) {
+        console.error("Hiba a tranzakciók lekérésekor:", error);
+      }
+    }
+
 
     useEffect(() => {
       fetchUser();
       fetchBalance();
+      fetchTransactions();
     }, []);
 
     const handleAddIncome = async () => {
@@ -52,6 +86,7 @@ const Dashboard = () => {
         setIncomeAmount('');
         fetchUser();
         fetchBalance();
+        fetchTransactions();
       } catch (error) {
         console.error("Hiba bevétel hozzáadásakor:", error)
       }
@@ -70,25 +105,12 @@ const Dashboard = () => {
         setExpenseAmount('');
         fetchUser();
         fetchBalance();
+        fetchTransactions();
       } catch (error) {
         console.error("Hiba kiadás hozzáadásakor:", error)
       }
     }
 
-    const fetchBalance = async () => {
-      const token = localStorage.getItem('access');
-      try {
-        const response = await axios.get('http://localhost:8000/api/balance/', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setBalance(response.data.balance);
-        setMonthlyIncome(response.data.monthly_income);
-      } catch (error) {
-        console.error("Hiba az egyenleg lekérdezésénél:", error);
-      }
-    }
 
     
     return (
@@ -100,7 +122,7 @@ const Dashboard = () => {
             <div className='adatok'>
               <div className='kiadasok_havi adat'>
                 <h3>Kiadások a hónapban</h3>
-                <p><span>123000</span> Ft</p>
+                <p><span>{monthlyExpense}</span> Ft</p>
               </div>
               <div className='bevetelek_havi adat'>
                 <h3>Bevételek a hónapban</h3>
@@ -128,7 +150,24 @@ const Dashboard = () => {
             <div className='kiadaskezelo'>
               <div className='kiadasok'>
                 <h2>Legutóbbi tranzakciók</h2>
-                <table></table>
+                <table>
+                        <thead>
+                            <tr>
+                                <th>Összeg</th>
+                                <th>Tipus</th>
+                                <th>Dátum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {transactions.map((transaction) => (
+                                <tr key={transaction.id}>
+                                    <td>{transaction.amount} Ft</td>
+                                    <td>{transaction.type === 'income' ? 'Bevétel' : 'Kiadás'}</td>
+                                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
               </div>
               <div className='gombok'>
                 <button className='uj_bevetel' onClick={() => setShowIncomeModal(true)}>Új bevétel hozzáadása</button>
