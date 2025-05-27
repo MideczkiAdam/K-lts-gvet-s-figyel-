@@ -57,6 +57,24 @@ const Dashboard = () => {
       }
     }
 
+    const handleAddExpense = async () => {
+      const token = localStorage.getItem('access')
+      try {
+        await axios.post('http://localhost:8000/api/transactions/', {
+          amount: expenseAmount,
+          type: 'expense'
+        }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setShowExpenseModal(false);
+        setExpenseAmount('');
+        fetchUser();
+        fetchBalance();
+      } catch (error) {
+        console.error("Hiba kiadás hozzáadásakor:", error)
+      }
+    }
+
     const fetchBalance = async () => {
       const token = localStorage.getItem('access');
       try {
@@ -150,7 +168,7 @@ const Dashboard = () => {
                       onChange={(e) => setExpenseAmount(e.target.value)}
                     />
                     <div className='buttons'>
-                      {<button/* ide baszd be a handleAddExpense függvényt, meg írd is meg  */className='plus'>Hozzáadás</button>}
+                      {<button onClick={handleAddExpense} className='plus'>Hozzáadás</button>}
                       <button onClick={() => setShowExpenseModal(false)} className='minus'>Mégsem</button>
                     </div>
                   </div>

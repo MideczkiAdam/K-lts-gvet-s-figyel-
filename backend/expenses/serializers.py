@@ -21,4 +21,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
-        fields = ['id', 'amount', 'type', 'date']
+        fields = ['id', 'user', 'amount', 'type', 'date']
+        read_only_fields = ['user']
+
+    
+

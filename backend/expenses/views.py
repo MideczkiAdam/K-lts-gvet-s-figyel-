@@ -46,7 +46,10 @@ class BalanceView(APIView):
 
         monthly_income = Transaction.objects.filter(user=user, type='income', date__month=current_month, date__year=current_year).aggregate(Sum('amount'))['amount__sum'] or 0
 
+        monthly_expense = Transaction.objects.filter(user=user, type='expense', date__month=current_month, date__year=current_year).aggregate(Sum('amount'))['amount__sum'] or 0
+
         return Response({
             "balance": balance,
-            "monthly_income": monthly_income
+            "monthly_income": monthly_income,
+            "monthly_expense": monthly_expense
         })
