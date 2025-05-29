@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from 'recharts';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -14,6 +23,14 @@ const Dashboard = () => {
     const [monthlyIncome, setMonthlyIncome] = useState(0)
     const [monthlyExpense, setMonthlyExpense] = useState(0);
     const [transactions, setTransactions] = useState([]);
+    const monthlyData = [
+      { honap: 'Jan', kiadas: 45000 },
+      { honap: 'Feb', kiadas: 52000 },
+      { honap: 'Már', kiadas: 48000 },
+      { honap: 'Ápr', kiadas: 60000 },
+      { honap: 'Máj', kiadas: 37000 },
+      { honap: 'Jún', kiadas: 42000 },
+    ];
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -140,7 +157,17 @@ const Dashboard = () => {
             <div className='diagramok'>
               <div className='oszlop'>
                 <h2>Havi kiadások</h2>
-                <div className='diagram1'></div>
+                <div className='diagram1' style={{ width: '100%', height: '90%' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={monthlyData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="honap" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="kiadas" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
               <div className='kor'>
                 <h2>Kiadások kategóriák szerint</h2>
@@ -150,7 +177,7 @@ const Dashboard = () => {
             <div className='kiadaskezelo'>
               <div className='kiadasok'>
                 <h2>Legutóbbi tranzakciók</h2>
-                <table>
+                <table className='table'>
                         <thead>
                             <tr>
                                 <th>Összeg</th>
@@ -161,9 +188,9 @@ const Dashboard = () => {
                         <tbody>
                             {transactions.map((transaction) => (
                                 <tr key={transaction.id}>
-                                    <td>{transaction.amount} Ft</td>
-                                    <td>{transaction.type === 'income' ? 'Bevétel' : 'Kiadás'}</td>
-                                    <td>{new Date(transaction.date).toLocaleDateString()}</td>
+                                    <td className='tr_amount'>{transaction.amount} Ft</td>
+                                    <td className='tr_type'>{transaction.type === 'income' ? 'Bevétel' : 'Kiadás'}</td>
+                                    <td className='tr_date'>{new Date(transaction.date).toLocaleDateString()}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -176,7 +203,11 @@ const Dashboard = () => {
             </div> 
 
             {showIncomeModal && (
-              <div className="modal-overlay" onClick={() => setShowIncomeModal(false)}>
+              <div
+                className="modal-overlay" 
+                style={{ top: 0, height: '100vh', width: '100vw', position: 'fixed' }}
+                onClick={() => setShowIncomeModal(false)}
+              >
                 <div className="modal" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-content">
                     <h3>Új bevétel hozzáadása</h3>
@@ -196,7 +227,11 @@ const Dashboard = () => {
             )}
 
             {showExpenseModal && (
-              <div className="modal-overlay" onClick={() => setShowExpenseModal(false)}>
+              <div
+                className="modal-overlay"
+                style={{ top: 0, height: '100vh', width: '100vw', position: 'fixed' }}
+                onClick={() => setShowExpenseModal(false)}
+              >
                 <div className="modal" onClick={(e) => e.stopPropagation()}>
                   <div className="modal-content">
                     <h3>Új kiadás hozzáadása</h3>
