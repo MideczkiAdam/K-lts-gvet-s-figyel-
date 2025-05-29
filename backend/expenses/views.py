@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from django.db.models import Sum
 from .serializers import RegisterSerializer, TransactionSerializer
 from .models import Transaction
+from django.db.models.functions import TruncMonth
 
 
 
@@ -62,3 +63,19 @@ class TransactionListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user).order_by('-date')[:5]
+
+
+class MonthlyExpenseChartView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        expenses = (Transaction.objects.filter(user=request.user, type='expense').annotate(month=TruncMonth('date')).values('month').annotate(total=Sum('amount')).order_by('month'))
+
+        formatted = [
+            {
+                "honap": expense["month"].strftime('%b'),
+                "kiadas": expense["total"]
+            }
+            for expense in expenses
+        ]
+        return Response(formatted)

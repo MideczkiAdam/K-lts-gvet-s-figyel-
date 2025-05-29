@@ -23,14 +23,7 @@ const Dashboard = () => {
     const [monthlyIncome, setMonthlyIncome] = useState(0)
     const [monthlyExpense, setMonthlyExpense] = useState(0);
     const [transactions, setTransactions] = useState([]);
-    const monthlyData = [
-      { honap: 'Jan', kiadas: 45000 },
-      { honap: 'Feb', kiadas: 52000 },
-      { honap: 'Már', kiadas: 48000 },
-      { honap: 'Ápr', kiadas: 60000 },
-      { honap: 'Máj', kiadas: 37000 },
-      { honap: 'Jún', kiadas: 42000 },
-    ];
+    const [monthlyExpenseData, setMonthlyExpenseData] = useState([]);
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -83,11 +76,27 @@ const Dashboard = () => {
       }
     }
 
+    const fetchMonthlyExpenses = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get('http://localhost:8000/api/expenses/monthly/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setMonthlyExpenseData(response.data)
+      } catch (error) {
+        console.error("Hiba a havi kiadások lekérdezésekor:", error);
+      }
+
+    }
+
 
     useEffect(() => {
       fetchUser();
       fetchBalance();
       fetchTransactions();
+      fetchMonthlyExpenses();
     }, []);
 
     const handleAddIncome = async () => {
@@ -159,7 +168,7 @@ const Dashboard = () => {
                 <h2>Havi kiadások</h2>
                 <div className='diagram1' style={{ width: '100%', height: '90%' }}>
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={monthlyData}>
+                    <BarChart data={monthlyExpenseData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="honap" />
                       <YAxis />
