@@ -24,6 +24,8 @@ const Dashboard = () => {
     const [monthlyExpense, setMonthlyExpense] = useState(0);
     const [transactions, setTransactions] = useState([]);
     const [monthlyExpenseData, setMonthlyExpenseData] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -91,12 +93,28 @@ const Dashboard = () => {
 
     }
 
+    const fetchCategories = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get('http://localhost:8000/api/categories/', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setCategories(response.data);
+        if (response.data.length > 0) {
+          setSelectedCategory(response.data[0].id);
+        }
+      } catch (error) {
+        console.error("Hiba a kategóriák lekérdezésekor:", error);
+      }
+    }
+
 
     useEffect(() => {
       fetchUser();
       fetchBalance();
       fetchTransactions();
       fetchMonthlyExpenses();
+      fetchCategories();
     }, []);
 
     const handleAddIncome = async () => {
@@ -123,7 +141,8 @@ const Dashboard = () => {
       try {
         await axios.post('http://localhost:8000/api/transactions/', {
           amount: expenseAmount,
-          type: 'expense'
+          type: 'expense',
+          category_id: selectedCategory
         }, {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -250,6 +269,17 @@ const Dashboard = () => {
                       value={expenseAmount}
                       onChange={(e) => setExpenseAmount(e.target.value)}
                     />
+                    <select
+                      value={selectedCategory || ''}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      style={{ marginTop: '10px' }}
+                    >
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
+                    </select>
                     <div className='buttons'>
                       {<button onClick={handleAddExpense} className='plus'>Hozzáadás</button>}
                       <button onClick={() => setShowExpenseModal(false)} className='minus'>Mégsem</button>

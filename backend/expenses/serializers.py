@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Transaction
+from .models import Transaction, Category
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -17,12 +17,19 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
 
 class TransactionSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+
+    category_id = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), source='category', write_only=True, required=True)
+
     class Meta:
         model = Transaction
-        fields = ['id', 'user', 'amount', 'type', 'date']
+        fields = ['id', 'user', 'amount', 'type', 'date', 'category', 'category_id']
         read_only_fields = ['user']
 
     
-

@@ -1,12 +1,12 @@
-from rest_framework import status, generics, permissions
+from rest_framework import status, generics, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.utils.timezone import now
 from django.db.models import Sum
-from .serializers import RegisterSerializer, TransactionSerializer
-from .models import Transaction
+from .serializers import RegisterSerializer, TransactionSerializer, CategorySerializer
+from .models import Transaction, Category
 from django.db.models.functions import TruncMonth
 
 
@@ -79,3 +79,13 @@ class MonthlyExpenseChartView(APIView):
             for expense in expenses
         ]
         return Response(formatted)
+    
+class CategoryViewSet(viewsets.ModelViewSet):
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Category.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

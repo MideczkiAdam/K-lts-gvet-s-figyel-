@@ -1,5 +1,9 @@
-from django.urls import path
-from .views import RegistrationView, getUserInfo, TransactionView, BalanceView, TransactionListView, MonthlyExpenseChartView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import RegistrationView, getUserInfo, TransactionView, BalanceView, TransactionListView, MonthlyExpenseChartView, CategoryViewSet
+
+router = DefaultRouter()
+router.register(r'categories', CategoryViewSet, basename='category')
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
@@ -8,4 +12,5 @@ urlpatterns = [
     path('transactions/list/', TransactionListView.as_view(), name='transaction-list'),
     path('balance/', BalanceView.as_view(), name='balance'),
     path('expenses/monthly/', MonthlyExpenseChartView.as_view(), name='monthly-expense-chart'),
+    path('', include(router.urls)),
 ]
