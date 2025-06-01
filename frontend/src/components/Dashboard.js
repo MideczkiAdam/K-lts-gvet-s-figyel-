@@ -26,6 +26,7 @@ const Dashboard = () => {
     const [monthlyExpenseData, setMonthlyExpenseData] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [chartData, setChartData] = useState([]);
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -108,6 +109,19 @@ const Dashboard = () => {
       }
     }
 
+    const fetchChartData = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get("http://localhost:8000/api/stats/spending-by-category/", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setChartData(response.data);
+      } catch (error) {
+        console.error("Hiba a grafikon adatainak lekérésekor:", error);
+      }
+    }
 
     useEffect(() => {
       fetchUser();
@@ -115,6 +129,7 @@ const Dashboard = () => {
       fetchTransactions();
       fetchMonthlyExpenses();
       fetchCategories();
+      fetchChartData();
     }, []);
 
     const handleAddIncome = async () => {
@@ -199,7 +214,14 @@ const Dashboard = () => {
               </div>
               <div className='kor'>
                 <h2>Kiadások kategóriák szerint</h2>
-                <div className='diagram2'></div>
+                <div className='diagram2'>
+                  <BarChart width={500} height={300} data={chartData}>
+                    <XAxis dataKey="category__name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="total" fill="#8884d8" />
+                  </BarChart>
+                </div>
               </div>
             </div>
             <div className='kiadaskezelo'>

@@ -89,3 +89,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+@api_view(['GET'])
+def spending_by_category(request):
+    user = request.user 
+    spending = (
+        Transaction.objects
+        .filter(user=user, type='expense')
+        .values('category__name')
+        .annotate(total=Sum('amount'))
+        .order_by('-total')
+    )
+    return Response(spending)
