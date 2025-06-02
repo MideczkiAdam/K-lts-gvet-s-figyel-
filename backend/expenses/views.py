@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.db import models
+from django.utils import timezone
+from datetime import timedelta
 from django.utils.timezone import now
 from django.db.models import Sum
 from .serializers import RegisterSerializer, TransactionSerializer, CategorySerializer
@@ -102,3 +105,21 @@ def spending_by_category(request):
         .order_by('-total')
     )
     return Response(spending)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def weekly_expense(request):
+    user = request.user
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=6)          
+
+    expenses = Transaction.objects.filter(
+        user = user,
+        type='expense',
+        date__date__gte=start_of_week,
+        date__date__lte=end_of_week
+    )
+    total = expenses.aggregate(total=models.Sum('amount'))['total'] or 0
+
+    return Response({'weekly_expense': total})

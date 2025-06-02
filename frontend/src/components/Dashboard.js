@@ -9,6 +9,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
 } from 'recharts';
 import './Dashboard.css';
 
@@ -27,6 +31,8 @@ const Dashboard = () => {
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [chartData, setChartData] = useState([]);
+    const COLORS = ['#3B82F6', '#F97316', '#10B981', '#EF4444', '#6366F1'];
+    const [weeklyExpense, setWeeklyExpense] = useState(0);
 
     const Logout = () => {
         localStorage.removeItem("access");
@@ -123,6 +129,20 @@ const Dashboard = () => {
       }
     }
 
+    const fetchWeeklyExpense = async () => {
+      const token = localStorage.getItem('access');
+      try {
+        const response = await axios.get('http://localhost:8000/api/expenses/weekly/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setWeeklyExpense(response.data.weekly_expense);
+      } catch (error) {
+        console.error("Hiba a heti kiadások lekérdezésekor:", error);
+      }
+    };
+
     useEffect(() => {
       fetchUser();
       fetchBalance();
@@ -130,6 +150,7 @@ const Dashboard = () => {
       fetchMonthlyExpenses();
       fetchCategories();
       fetchChartData();
+      fetchWeeklyExpense();
     }, []);
 
     const handleAddIncome = async () => {
@@ -171,8 +192,6 @@ const Dashboard = () => {
       }
     }
 
-
-    
     return (
       <div className='main'>
             <div className='name'>
@@ -194,7 +213,7 @@ const Dashboard = () => {
               </div>
               <div className='kiadasok_heti adat'>
                 <h3>Kiadások a héten</h3>
-                <p><span>21000</span> Ft</p>
+                <p><span>{weeklyExpense}</span> Ft</p>
               </div>
             </div>
             <div className='diagramok'>
@@ -214,13 +233,26 @@ const Dashboard = () => {
               </div>
               <div className='kor'>
                 <h2>Kiadások kategóriák szerint</h2>
-                <div className='diagram2'>
-                  <BarChart width={500} height={300} data={chartData}>
-                    <XAxis dataKey="category__name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="total" fill="#8884d8" />
-                  </BarChart>
+                <div className='diagram2' style={{ width: '100%', height: '90%' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={chartData}
+                          dataKey="total"
+                          nameKey="category__name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          label
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
@@ -255,7 +287,7 @@ const Dashboard = () => {
             {showIncomeModal && (
               <div
                 className="modal-overlay" 
-                style={{ top: 0, height: '100vh', width: '100vw', position: 'fixed' }}
+                style={{ top: 0, height: '100vh', width: '100vw', position: 'fixed'}}
                 onClick={() => setShowIncomeModal(false)}
               >
                 <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -292,12 +324,16 @@ const Dashboard = () => {
                       onChange={(e) => setExpenseAmount(e.target.value)}
                     />
                     <select
+                      className='category'
                       value={selectedCategory || ''}
                       onChange={(e) => setSelectedCategory(e.target.value)}
                       style={{ marginTop: '10px' }}
                     >
                       {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
+                        <option 
+                          style={{ borderRadius: 'none'}}
+                          key={cat.id} value={cat.id}
+                        >
                           {cat.name}
                         </option>
                       ))}
